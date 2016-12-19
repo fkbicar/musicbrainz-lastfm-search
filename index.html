@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="musicSearch">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <title>Music Search</title>
+
+    <link href="css/main.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.0/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.2/angular-ui-router.min.js"></script>
+
+    <script src="js/app.js"></script>
+    <script src="js/service.js"></script>
+    <script src="js/musicbrainz.js"></script>
+    <script src="js/lastfm.js"></script>
+    <script src="js/favorites.js"></script>
+
+  </head>
+  <body>
+
+  <nav class="navbar navbar-inverse">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-content" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" ui-sref="musicbrainz" ui-sref-active="active">MusicBrainz</a>
+      </div>
+      <div class="collapse navbar-collapse" id="navbar-collapse-content">
+        <ul class="nav navbar-nav">
+          <li class="navbar-item">
+            <a class="navbar-link pull-left" ui-sref="lastfm" ui-sref-active="active">
+              <i class="header-menu-logo-last fa fa-lastfm"></i>
+              <span>Last.fm</span>
+            </a>
+          </li>
+          <li class="navbar-item">
+            <a class="navbar-link" ui-sref="favorites" ui-sref-active="active">
+              <i class="header-menu-logo-fave fa fa-star"></i>
+              <span>Favourites</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <script type="text/ng-template" id="favorites.html">
+    <div class="col-xs-12">
+      <h1>Favourites</h1><hr>
+    </div>
+
+    <div class="col-xs-12" ng-show="isEmptyReleases() && isEmptyArtists()">
+      <h4>{{noDataMessage}}</h4>
+    </div>
+
+    <div class="favorites-release col-xs-12 table-responsive" ng-hide="isEmptyReleases()">
+      <h5>Releases</h5>
+      <table class="table table-hover" ng-init="getAllFavoriteReleases()">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Year</th>
+            <th>Title</th>
+            <th>Release Label</th>
+            <th class="horz-align">Number of Tracks</th>
+          </tr>
+        </thead>
+          <tbody>
+            <tr ng-repeat="release in releases track by $index">
+              <td class="vert-align"><span class="favorite-star" ng-class="isFavoriteRelease(release.id)" ng-click="faveRelease(release.id, release); reloadPage()"></span></td>
+              <td class="vert-align">{{release.date | limitTo:4}}</td>
+              <td class="vert-align">{{release.title}}</td>
+              <td class="vert-align">
+                <span ng-repeat="label in release['label-info']">{{label.label.name}}</span>
+              </td>
+              <td class="vert-align horz-align">{{release['track-count']}}</td>
+            </tr>
+          </tbody>
+      </table>
+    </div> <!-- search field container div end -->
+
+    <div class="favorites-artist col-xs-12 table-responsive" ng-hide="isEmptyArtists()">
+      <h5>Artists</h5>
+      <table class="table table-hover" ng-init="getAllFavoriteArtists()">
+        <thead>
+          <tr>
+            <th></th>
+            <th></th>
+            <th>Artist Name</th>
+          </tr>
+        </thead>
+          <tbody>
+            <tr ng-repeat="artist in artists track by $index">
+              <td class="vert-align"><span class="favorite-star" ng-class="isFavoriteArtist(artist.mbid)" ng-click="faveArtist(artist.mbid, artist); reloadPage()"></span></td>
+              <td class="vert-align"><img ng-src="{{artist.image}}" class="img-thumbnail"></td>
+              <td class="vert-align">{{artist.name}}</td>
+            </tr>
+          </tbody>
+      </table>
+    </div> <!-- search result container div end -->
+  </script>
+
+  <script type="text/ng-template" id="musicbrainz.html">
+    <div class="section-search-field col-xs-12">
+      <div class="col-xs-12">
+        <h1>Search MusicBrainz</h1>
+      </div>
+      <form class="col-xs-12" name="searchArtist" ng-submit="searchArtists(artistsearchterm)">
+        <div class="input-group">
+          <div class="input-group-btn">
+            <input type="search" required class="form-control" placeholder="Search Artist" name="srch-term" id="musicbrainz-srch-term" ng-model="artistsearchterm">
+            <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+          </div>
+        </div>
+      </form>
+    </div> <!-- search field container div end -->
+    <div class="col-xs-12" ng-show="isEmptyArtists()">
+      <h4>{{noDataMessage}}</h4>
+    </div>
+    <div class="musicbrainz-search-result col-xs-12" ng-hide="isEmptyArtists()">
+      <h2>Search Results:</h2><hr/>
+      <div class="panel-group col-xs-12" id="accordion" role="tablist" aria-multiselectable="true">
+        <h5>Artist Name</h5>
+        <div class="panel panel-default" ng-repeat="artist in artists.artists">
+          <div class="panel-heading" role="tab" id="heading{{artist.id}}">
+            <div class="row panel-title">
+              <div class="panel-title-artist col-md-8">{{artist.name}}</div>
+              <div class="panel-title-release col-md-4"><a role="button" data-toggle="collapse" data-parent="#accordion" data-target="#collapse{{artist.id}}" href="" aria-expanded="true" aria-controls="collapse{{artist.id}}" ng-click="searchReleases(artist.id)">{{artist.toggle ? 'Show Release' : 'Hide Release'}}</a></div>
+            </div>
+          </div>
+          <div id="collapse{{artist.id}}" class="panel-collapse collapse table-responsive" role="tabpanel" aria-labelledby="heading{{artist.id}}" ng-show="isResultsAvailable">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Year</th>
+                  <th>Title</th>
+                  <th>Release Label</th>
+                  <th class="horz-align">Number of Tracks</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="release in releases.releases">
+                  <td class="vert-align"><span class="musicbrainz-star" ng-class="isFavorite(release.id)" ng-click="faveRelease(release.id, release)"></span></td>
+                  <td class="vert-align">{{release.date | limitTo:4}}</td>
+                  <td class="vert-align">{{release.title}}</td>
+                  <td class="vert-align">
+                    <span ng-repeat="label in release['label-info']">{{label.label.name}}</span>
+                  </td>
+                  <td class="vert-align horz-align">{{release['track-count']}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div> <!-- panel div end -->
+    </div> <!-- search result container div end -->
+  </script>
+
+  <script type="text/ng-template" id="lastfm.html">
+    <div class="section-search-field col-xs-12">
+      <div class="col-xs-12">
+        <h1>Search LastFM</h1>
+      </div>
+      <form class="col-xs-12" name="searchArtist" ng-submit="searchArtists(artistsearchterm)">
+        <div class="input-group">
+          <div class="input-group-btn">
+            <input type="search" required class="form-control" placeholder="Search Artist" name="srch-term" id="lastfm-srch-term" ng-model="artistsearchterm">
+            <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+          </div>
+        </div>
+      </form>
+    </div> <!-- search field container div end -->
+
+    <div class="col-xs-12" ng-show="isEmptyArtists()">
+      <h4>{{noDataMessage}}</h4>
+    </div>
+
+    <div class="lastfm-search-result col-xs-12" ng-hide="isEmptyArtists()">
+      <h2>Search Results:</h2><hr/>
+
+      <div class="lastfm-artist table-responsive col-xs-12">
+        <table class="table table-condensed table-striped">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Artist Name</th>
+              <th></th>
+            </tr>
+          </thead>
+            <tbody>
+              <tr ng-repeat="artist in artists track by $index">
+                <td class="vert-align"><img ng-src="{{artist.image}}" class="img-thumbnail"></td>
+                <td class="vert-align">{{artist.name}}</td>
+                <td class="vert-align horz-align"><span ng-class="isShortlist(artist.mbid)" ng-click="shortlistArtist(artist.mbid, artist)"></span></td>
+              </tr>
+            </tbody>
+        </table>
+      </div> <!-- search result container div end -->
+    </div> <!-- search result container div end -->
+
+    <div class="shortlist-search-result col-xs-12" ng-hide="isEmptyShortlist()">
+      <h2>My Shortlist:</h2><hr/>
+
+      <div class="lastfm-artist-shortlist table-responsive col-xs-12">
+        <table class="table table-condensed table-striped">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Artist Name</th>
+            </tr>
+          </thead>
+            <tbody>
+              <tr ng-repeat="shortlist in finalShortlistData track by $index">
+                <td class="vert-align"><span class="shortlist-star" ng-class="isFavorite(shortlist.mbid)" ng-click="faveArtist(shortlist.mbid, shortlist)"></span></td>
+                <td class="vert-align">{{shortlist.name}}</td>
+              </tr>
+            </tbody>
+        </table>
+      </div> <!-- search result container div end -->
+    </div> <!-- search result container div end -->
+  </script>
+
+  <div class="container">
+    <ui-view></ui-view>
+  </div>
+
+  <!--
+  <footer>
+      2016 &copy; Copyright
+  </footer>
+  -->
+  </body>
+</html>

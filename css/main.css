@@ -1,0 +1,68 @@
+body {
+    font-family: "Open Sans", sans-serif !important;
+}
+
+footer {
+    bottom: 0;
+    left: 45%;
+    width: 100%;
+    height: 50px;
+}
+
+h5 {
+    font-weight: bold;
+}
+
+.header-menu-logo-last {
+    color: red;
+}
+
+.header-menu-logo-fave {
+    color: #ffff00;
+}
+
+.musicbrainz-star {
+    color: blue;
+}
+
+.shortlist-star {
+    color: blue;
+}
+
+.favorite-star {
+    color: blue;
+}
+
+.lastfm-shortlist {
+    color: green;
+}
+
+.lastfm-unshortlist {
+    color: red;
+}
+
+.section-search-field {
+    margin-bottom: 50px;
+}
+
+.lastfm-artist {
+    margin-bottom: 50px;
+}
+
+.panel-title-release {
+    text-align: center;
+}
+
+.table tbody>tr>td.vert-align{
+    vertical-align: middle;
+}
+
+.horz-align {
+    text-align: center;
+}
+
+
+/*.panel, .panel-group .panel-heading+.panel-collapse>.panel-body{*/
+    /*border: none;*/
+    /*!*box-shadow: none;*!*/
+/*}*/
