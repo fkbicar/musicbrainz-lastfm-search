@@ -5,7 +5,7 @@
 
 var ctrl = angular.module('musicSearch.lastfm-controller', []);
 
-var LastFMController = function($scope, GenericFactoryService){
+var LastFMController = function($scope, $location, $anchorScroll, GenericFactoryService){
 
     var shortlistData = [];
     $scope.artists = [];
@@ -90,6 +90,11 @@ var LastFMController = function($scope, GenericFactoryService){
             return "fa fa-star-o fa-lg";
         }
     };
+
+    $scope.gotoShortlistTable = function() {
+        $location.hash('shortlist-anchor');
+        $anchorScroll();
+    };
 };
 
-ctrl.controller('LastFMController',['$scope', 'GenericFactoryService', LastFMController]);
+ctrl.controller('LastFMController',['$scope', '$location', '$anchorScroll', 'GenericFactoryService', LastFMController]);

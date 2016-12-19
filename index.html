@@ -188,7 +188,12 @@
     </div>
 
     <div class="lastfm-search-result col-xs-12" ng-hide="isEmptyArtists()">
-      <h2>Search Results:</h2><hr/>
+      <h2>Search Results:</h2>
+      <hr/>
+      <span class="col-md-10"></span>
+      <span class="shortlist-button col-md-2 pull-right">
+        <a role="button" class="btn btn-default" ng-click="gotoShortlistTable()" href="">Show Shortlist</a>
+      </span>
 
       <div class="lastfm-artist table-responsive col-xs-12">
         <table class="table table-condensed table-striped">
@@ -210,7 +215,7 @@
       </div> <!-- search result container div end -->
     </div> <!-- search result container div end -->
 
-    <div class="shortlist-search-result col-xs-12" ng-hide="isEmptyShortlist()">
+    <div id="shortlist-anchor" class="shortlist-search-result col-xs-12" ng-hide="isEmptyShortlist()">
       <h2>My Shortlist:</h2><hr/>
 
       <div class="lastfm-artist-shortlist table-responsive col-xs-12">

@@ -107,8 +107,6 @@ var GenericFactoryService = function($http) {
         } else {
             delete favoriteArtistDataArray[key];
         }
-
-        console.log(favoriteArtistDataArray);
     };
 
 
