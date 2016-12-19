@@ -17,10 +17,12 @@ Initially, the different sections of the pages were divided into templates - one
 per template. However, due to the security issues of Chrome, is not possible. In the end it was
 decided to just use inline templates. 
 
-Also, instead of using ngRoute, I decided to use ui.route, which I found easier to implement. 
+Also, instead of using ngRoute, I decided to use ui.router, which I found easier to implement. 
 
 For the UI and responsiveness, this is not my expertise, and you may notice that the pages are
 not as responsive as I'd want it to be.
 
-Lastly, I ran out of time to add testing to the application. So I am leaving this as is.
+Lastly, I ran out of time to add testing to the application. So I am leaving this as is. All 
+features have been tested using Chrome, and their responsiveness is also tested through Chromes'
+developer tools.
 
