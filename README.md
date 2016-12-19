@@ -5,7 +5,9 @@ Search artists and release from MusicBrainz and LastFM API using AngularJS
 
 ##Tools/Technologies
 - HTML5
-- CSS & Bootstrap
+- CSS
+- Bootstrap
+- JavaScript
 - AngularJS
 
 ##Notes
@@ -47,7 +49,7 @@ you can favorite an artist for it to show in the Favourite page.
 Favourite   - All the favorited Artists and Releases are shown here in two separate lists. A user has the 
 ability to unfavorite or favorite an artist/release already on the list.
 
-**Note: The list of artist and releases, whether they are show on the list, refreshes when the user navigates 
-away from the Favourites page, and navigates right back.**
+>> Note: The list of artist and releases, whether they are show on the list, refreshes when the user navigates 
+away from the Favourites page, and navigates right back.
 
                 
